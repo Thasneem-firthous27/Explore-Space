@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="exploreSpaceApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ExploreSpace | Discover the Universe</title>
+
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body ng-controller="SpaceController">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+
+        <div class="logo">
+            🌌 ExploreSpace
+        </div>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#planets">Planets</a>
+            <a href="#missions">Missions</a>
+            <a href="#quiz">Quiz</a>
+            <a href="#favorites">⭐ Favorites</a>
+            <a href="#facts">Space Facts</a>
+        </div>
+
+    </nav>
+
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <p class="small-title">WELCOME TO EXPLORESPACE</p>
+
+            <h1>
+                Explore the
+                <span>Universe</span>
+            </h1>
+
+            <p class="hero-text">
+                Discover planets, explore space missions,
+                learn fascinating facts and test your
+                knowledge of the cosmos.
+            </p>
+
+            <button class="main-button">
+                🚀 Explore Now
+            </button>
+
+        </div>
+
+        <div class="hero-planet">
+            🌍
+        </div>
+
+    </section>
+
+
+    <!-- PLANETS SECTION -->
+    <section class="planets-section" id="planets">
+
+        <div class="section-heading">
+
+            <p>OUR SOLAR SYSTEM</p>
+
+            <h2>Explore the Planets</h2>
+
+            <span>
+                Discover the worlds that orbit our Sun.
+            </span>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="search-box">
+
+            <input
+                type="text"
+                ng-model="searchText"
+                placeholder="🔍 Search for a planet..."
+            >
+
+        </div>
+
+
+        <!-- PLANET CARDS -->
+        <div class="planet-container">
+
+            <div
+                class="planet-card"
+                ng-repeat="planet in planets | filter:searchText"
+            >
+
+                <div class="planet-image">
+                    {{ planet.icon }}
+                </div>
+
+                <h3>{{ planet.name }}</h3>
+
+                <p>{{ planet.description }}</p>
+
+                <div class="planet-info">
+
+                    <span>
+                        🌙 {{ planet.moons }} Moons
+                    </span>
+
+                    <span>
+                        ☀️ {{ planet.distance }}
+                    </span>
+
+                </div>
+
+                <button class="explore-button" ng-click="selectPlanet(planet)">
+    Explore →
+</button>    
+<button class="favorite-button" ng-click="togglePlanetFavorite(planet)">
+    {{ isPlanetFavorite(planet) ? '★ Favorited' : '☆ Add to Favorites' }}
+</button>       
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- PLANET DETAILS -->
+
+<div class="details-panel" ng-if="selectedPlanet">
+
+    <button class="close-button"
+            ng-click="closePlanet()">
+        ✕ Close
+    </button>
+
+    <div class="details-icon">
+        {{ selectedPlanet.icon }}
+    </div>
+
+    <h2>{{ selectedPlanet.name }}</h2>
+
+    <p>{{ selectedPlanet.description }}</p>
+
+    <div class="details-grid">
+
+        <div class="detail-item">
+            <span>Distance from Sun</span>
+            <strong>{{ selectedPlanet.distance }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Diameter</span>
+            <strong>{{ selectedPlanet.diameter }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Gravity</span>
+            <strong>{{ selectedPlanet.gravity }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Moons</span>
+            <strong>{{ selectedPlanet.moons }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Length of Day</span>
+            <strong>{{ selectedPlanet.day }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Length of Year</span>
+            <strong>{{ selectedPlanet.year }}</strong>
+        </div>
+
+    </div>
+
+    <div class="planet-fact">
+        ✨ {{ selectedPlanet.fact }}
+    </div>
+
+</div>
+<!-- SPACE QUIZ -->
+
+<section class="quiz-section" id="quiz">
+
+    <div class="section-heading">
+
+        <p>TEST YOUR KNOWLEDGE</p>
+
+        <h2>🚀 Space Challenge</h2>
+
+        <span>
+            How much do you know about the universe?
+        </span>
+
+    </div>
+
+
+    <!-- QUIZ QUESTIONS -->
+
+    <div class="quiz-box" ng-if="!quizFinished">
+
+        <div class="quiz-progress">
+            Question {{ currentQuestion + 1 }} of {{ questions.length }}
+        </div>
+
+
+        <h3>
+            {{ questions[currentQuestion].question }}
+        </h3>
+
+
+        <div class="quiz-options">
+
+            <label
+                ng-repeat="option in questions[currentQuestion].options"
+                class="quiz-option">
+
+                <input
+                    type="radio"
+                    name="quizAnswer"
+                    ng-model="$parent.$parent.selectedAnswer"
+                    ng-value="option">
+
+                <span>{{ option }}</span>
+
+            </label>
+
+        </div>
+
+
+        <button
+            class="quiz-button"
+            ng-click="submitAnswer()">
+
+            {{ currentQuestion === questions.length - 1
+               ? 'Finish Quiz 🎉'
+               : 'Next Question →' }}
+
+        </button>
+
+    </div>
+
+
+    <!-- QUIZ RESULT -->
+
+    <div class="quiz-result" ng-if="quizFinished">
+
+        <div class="result-icon">
+            🎉
+        </div>
+
+        <h2>Quiz Complete!</h2>
+
+        <p>Your Space Explorer Score</p>
+
+        <div class="score">
+            {{ score }} / {{ questions.length }}
+        </div>
+
+        <p class="result-message">
+            {{ resultMessage }}
+        </p>
+
+        <button
+            class="quiz-button"
+            ng-click="restartQuiz()">
+
+            🔄 Try Again
+
+        </button>
+
+    </div>
+
+</section>
+<!-- SPACE MISSIONS -->
+
+<section class="missions-section" id="missions">
+
+    <div class="section-heading">
+
+        <p>EXPLORE THE FUTURE</p>
+
+        <h2>🚀 Space Missions</h2>
+
+        <span>
+            Discover missions exploring the Moon, Mars and deep space.
+        </span>
+
+    </div>
+
+
+    <!-- MISSION CARDS -->
+
+    <div class="missions-container">
+
+        <div
+            class="mission-card"
+            ng-repeat="mission in missions">
+
+            <div class="mission-icon">
+                {{ mission.icon }}
+            </div>
+
+            <div class="mission-status">
+                {{ mission.status }}
+            </div>
+
+            <h3>
+                {{ mission.name }}
+            </h3>
+
+            <p>
+                {{ mission.description }}
+            </p>
+
+            <div class="mission-info">
+
+                <span>
+                    📍 {{ mission.destination }}
+                </span>
+
+                <span>
+                    📅 {{ mission.year }}
+                </span>
+
+            </div>
+
+            <button
+                class="mission-button"
+                ng-click="selectMission(mission)">
+
+                View Mission →
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION DETAILS -->
+
+    <div
+        class="mission-details"
+        ng-if="selectedMission">
+
+        <button
+            class="close-button"
+            ng-click="closeMission()">
+
+            ✕ Close
+
+        </button>
+
+
+        <div class="mission-details-icon">
+            {{ selectedMission.icon }}
+        </div>
+
+
+        <h2>
+            {{ selectedMission.name }}
+        </h2>
+
+
+        <p>
+            {{ selectedMission.description }}
+        </p>
+
+
+        <div class="mission-detail-grid">
+
+            <div>
+                <span>Destination</span>
+                <strong>
+                    {{ selectedMission.destination }}
+                </strong>
+            </div>
+
+
+            <div>
+                <span>Year</span>
+                <strong>
+                    {{ selectedMission.year }}
+                </strong>
+            </div>
+
+
+            <div>
+                <span>Status</span>
+                <strong>
+                    {{ selectedMission.status }}
+                </strong>
+            </div>
+
+
+            <div>
+                <span>Space Agency</span>
+                <strong>
+                    {{ selectedMission.agency }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="mission-objective">
+
+            <h3>🎯 Mission Objective</h3>
+
+            <p>
+                {{ selectedMission.objective }}
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- FAVORITES SECTION -->
+<section class="favorites-section" id="favorites">
+
+    <h2>⭐ My Favorite Planets</h2>
+
+    <p class="section-subtitle">
+        Your personal collection of planets
+    </p>
+
+    <div class="favorites-container">
+
+        <div class="favorite-card"
+             ng-repeat="planet in favoritePlanets">
+
+            <div class="favorite-icon">
+                {{ planet.icon }}
+            </div>
+
+            <h3>{{ planet.name }}</h3>
+
+            <p>{{ planet.description }}</p>
+
+            <div class="favorite-info">
+                <span>🌙 {{ planet.moons }} Moons</span>
+                <span>📏 {{ planet.distance }}</span>
+            </div>
+
+            <button class="remove-favorite"
+                    ng-click="togglePlanetFavorite(planet)">
+                ❌ Remove
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Message when there are no favorites -->
+    <div class="no-favorites"
+         ng-if="favoritePlanets.length === 0">
+
+        <div class="empty-icon">🌌</div>
+
+        <h3>No favorites yet</h3>
+
+        <p>
+            Explore the planets and add your favorite ones here!
+        </p>
+
+    </div>
+
+</section>
+<!-- SPACE FACT SECTION -->
+<section class="space-fact-section" id="facts">
+
+    <div class="fact-box">
+
+        <div class="fact-icon">
+            🌌
+        </div>
+
+        <p class="fact-label">
+            DID YOU KNOW?
+        </p>
+
+        <h2>
+            {{ currentFact }}
+        </h2>
+
+        <button class="fact-button" ng-click="newFact()">
+            🔄 Discover Another Fact
+        </button>
+
+    </div>
+
+</section>
+
+
+    <!-- SIMPLE FOOTER -->
+    <footer>
+
+        <h3>🌌 ExploreSpace</h3>
+
+        <p>
+            Explore the Universe. Discover the Unknown.
+        </p>
+
+        <p class="copyright">
+            © 2026 ExploreSpace
+        </p>
+
+    </footer>
+
+
+    <!-- AngularJS -->
+    <script src="app.js"></script>
+
+</body>
+
+</html>
